@@ -28,4 +28,11 @@ public class SessionIdReader {
         return nextLine[6];
     }
 
+    public String[] getOneSessionData() throws IOException {
+        String[] nextLine = reader.readNext();
+        if (nextLine == null) {
+            return null;
+        }
+        return nextLine;
+    }
 }

@@ -25,6 +25,8 @@ public class ProducerConsumerQueueConfig {
     public final String instance;
     public final boolean collectQueueStats;
     public final boolean collectConcurrencyPermitStats;
+    public final boolean perUserTopics;
+
     public final long runtime;
     public final Date endDate;
     /*
@@ -66,12 +68,17 @@ public class ProducerConsumerQueueConfig {
         return instance;
     }
 
+    public boolean getPerUserTopics() {
+        return perUserTopics;
+    }
+
     public ProducerConsumerQueueConfig(int concurrency, int numHandshakes, String sessionsFile, String[] topics,
                                        String instance,
                                        int maxHandshakeConcurrency,
                                        boolean collectQueueStats,
                                        long runtime,
-                                       boolean collectConcurrencyPermitStats
+                                       boolean collectConcurrencyPermitStats,
+                                       boolean perUserTopics
     ) {
         this.concurrency = concurrency;
         this.concurrencyPermit = new Semaphore(concurrency);
@@ -84,6 +91,7 @@ public class ProducerConsumerQueueConfig {
         this.collectConcurrencyPermitStats = collectConcurrencyPermitStats;
         this.runtime = runtime;
         this.endDate = new Date(new Date().getTime() + runtime);
+        this.perUserTopics = perUserTopics;
     }
 
     public ProducerConsumerQueueConfig(String fileName) throws IOException {
@@ -97,12 +105,12 @@ public class ProducerConsumerQueueConfig {
         this.endDate = new Date(new Date().getTime() + runtime);
         System.out.println("run time(applies to connects): " + runtime);
         LOGGER.info("run time(applies to connects): " + runtime);
-        String topicList = p.getProperty("channels");
+        String topicList = p.getProperty("channels", "NOTSETINCONFIG");
         topics = topicList.split(",");
         maxHandshakeConcurrency = Integer.parseInt(p.getProperty("max.handshake.concurrency"));
         collectQueueStats = Boolean.parseBoolean(p.getProperty("collect_queue_stats"));
         collectConcurrencyPermitStats = Boolean.parseBoolean(p.getProperty("collect_concurrency_stats"));
-
+        this.perUserTopics = Boolean.parseBoolean(p.getProperty("per_user_topics"));
         System.out.println("max concurrency = " + concurrency);
         LOGGER.info("max concurrency = " + concurrency);
         System.out.println("handshake count = " + numHandshakes);
@@ -111,6 +119,8 @@ public class ProducerConsumerQueueConfig {
         LOGGER.info("handshake concurrency = " + maxHandshakeConcurrency);
         System.out.println("Queue stats collection = " + collectQueueStats);
         LOGGER.info("Queue stats collection = " + collectQueueStats);
+        System.out.println("PerUserTopics? = " + this.perUserTopics);
+        LOGGER.info("PerUserTopics? = " + this.perUserTopics);
     }
 
     public SessionIdReader getSessionIdReader(String sessionIdFile) throws FileNotFoundException {

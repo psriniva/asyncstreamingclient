@@ -30,6 +30,7 @@ public class RequestGenerator implements Runnable {
     private final Semaphore handshakeConcurrencyPermit;
     private final Semaphore concurrencyPermit;
     private final Date endTime;
+    private final boolean perUserTopics;
 
 
     public RequestGenerator(String config) {
@@ -61,6 +62,7 @@ public class RequestGenerator implements Runnable {
         handshakeConcurrencyPermit = new Semaphore(this.config.getMaxHandshakeConcurrency());
         endTime = this.config.endDate;
         concurrencyPermit = this.config.getConcurrencyPermit();
+        perUserTopics = this.config.getPerUserTopics();
     }
 
     public void generateRequests() {
@@ -71,8 +73,15 @@ public class RequestGenerator implements Runnable {
         for (int i = 0; i < numHandshakes; i++) {
             QueueingStreamingClientImpl httpClient = null;
             String sessionId = null;
+            String[] topics = config.getTopics();
             try {
-                sessionId = sessionReader.getOneSessionId();
+                if (perUserTopics) {
+                    String[] userInfo = sessionReader.getOneSessionData();
+                    sessionId = userInfo[6];
+                    topics = userInfo[7].split(",");
+                } else {
+                    sessionId = sessionReader.getOneSessionId();
+                }
             } catch (IOException e) {
                 LOGGER.warn("Error reading session id.  Skipping one client.");
                 e.printStackTrace();
@@ -83,7 +92,7 @@ public class RequestGenerator implements Runnable {
                     config.getInstance(),
                     pcQueue.getProducer(),
                     pcQueue.getProducer(),
-                    config.getTopics(),
+                    topics,
                     handshakeConcurrencyPermit,
                     endTime,
                     concurrencyPermit
