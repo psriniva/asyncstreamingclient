@@ -1,3 +1,55 @@
+HOW TO BUILD:
+
+0.  Install SystemInfo.
+git clone https://github.com/psriniva/SystemInfo.git
+mvn compile
+mvn install -Dmaven.test.skip=true
+
+1. Make sure you have 64 bit Java 7.
+
+2. clone the project:
+
+git clone https://github.com/psriniva/asyncstreamingclient.git
+Initialized empty Git repository in /home/psrinivasan/tmp/asyncstreamingclient/.git/
+remote: Counting objects: 949, done.
+remote: Compressing objects: 100% (442/442), done.
+remote: Total 949 (delta 380), reused 947 (delta 378)
+Receiving objects: 100% (949/949), 668.66 KiB | 773 KiB/s, done.
+Resolving deltas: 100% (380/380), done.
+
+
+3.  mvn install:install-file -Dfile=lib/Smc.jar -DgroupId=org.myownsmcjar -DartifactId=my_smc -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+
+
+4.
+mvn compile
+mvn jar:jar
+mvn dependency:copy-dependencies
+
+
+5.  Now you should have a correctly installed program.
+ Next, you need a config.properties file and a logging.properties file which will tell the load generator what to do.
+ See config.properties and logging.properties.
+
+6. more on config.properties: http_client.max.concurrency controls the absolute concurrency of stress test.
+max.handshake.concurrency controls handshake concurrency only.  We're worried about handshakes overwhelming the system.
+producer.handshake.count is a way to specify how many users we want in the system.  The user specifications are read
+from a file referred to by sessions.file
+
+The format of the sessions.file pointer is a set of lines that look like:
+username@myorg.org,mypassword,https://ist3.soma.salesforce.com,00530000006yXzy,ROLE,Profile,00D30000001IXN9!AQcAQKMAxuzTPj8yeaoDw9HgXybXZKg9qaPHWpeSmqFHbE9RA0cCMO5Iq.2AzMfCcMBxRSh38VMyRIey4mRSO8BB3uni2tZ4,/topic/PollNotice1?CreatedById=00530000006yXzyAAE
+
+So the password field doesnt really matter.(This file have a lot of evolutionary vestiges).  But you need to specify
+the server url, session id, and the topic name (if you're using filters).  If you're not using filters the last column
+is not necessary, just set "per_user_topics = false" and specify your topic using the "channels" property.
+
+7. invoke the program by running
+ thunderingherd.sh <relative or absolute path to the directory that contains config.properties and logging.properties>
+
+And that's it.  You are now able to generate streaming load.
+=================
+
+
 System Settings:
 It's critical to have a godo file descriptor limit:
 sysctl -w fs.file-max=250000
