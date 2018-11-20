@@ -54,11 +54,11 @@ System Settings:
 It's critical to have a godo file descriptor limit:
 sysctl -w fs.file-max=250000
 
-psrinivasan@psrinivasan-wsl1:~$ ulimit -n
+x@y:~$ ulimit -n
 8192
-psrinivasan@psrinivasan-wsl1:~$ ulimit -Hn
+x@y:~$ ulimit -Hn
 100000
-psrinivasan@psrinivasan-wsl1:~$ ulimit -n 99999
+x@y:~$ ulimit -n 99999
 
 in /etc/security/limits.conf
 
