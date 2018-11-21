@@ -23,26 +23,26 @@ public class HttpClient {
     private static final boolean BLOCKING = false;
     private static final boolean THREADED = false;
     private static final String URL = "http://www.gnu.org/";
-    private static final String BASE_URI = "https://ist6.soma.salesforce.com";
-    //private static final String BASE_URI = "http://ist6-app1-1-sfm.ops.sfdc.net:8085";
+    private static final String BASE_URI = "https://me.com";
+    //private static final String BASE_URI = "http://me.net:8085";
 
-    private static final String QUERY_URI = "https://ist6.soma.salesforce.com/services/data/v25.0/query/";
+    private static final String QUERY_URI = "https://me.com/services/data/v25.0/query/";
     private static final String HANDSHAKE_MESSAGE = "[{\"version\":\"1.0\",\"minimumVersion\":\"0.9\",\"channel\":\"/meta/handshake\",\"supportedConnectionTypes\": [\"long-polling\"]}]";
     private static final String CONNECT_PREFIX_MESSAGE = "[{\"channel\":\"/meta/connect\",\"clientId\":\"";
     private static final String CONNECT_POST_MESSAGE = "\",\"connectionType\":\"long-polling\"}]";
     private static final String DEFAULT_PUSH_ENDPOINT = "/cometd/25.0";
     private static final String STREAMING_URI = BASE_URI + DEFAULT_PUSH_ENDPOINT;
     private static final ProxyServer p = new ProxyServer("127.0.0.1", 8080);
-    private static final String USER_NAME = "user_40_r2@180.private.streaming.100.org36";
+    private static final String USER_NAME = "me";
 
 
-    private static String SESSION_ID = "00DD0000001H4nX!ARoAQP00Mop0zArOpJpcTNCS5d58HZQqn0TONpjCXK_p3bzMWNvHYtQUZcIgbiPoXR.JIiV1f4NI39cKMpSkyt1vyt1My1gU";
+    private static String SESSION_ID = "23423";
 
     public static void main(String[] args) throws Exception,
             ExecutionException,
             InterruptedException, SAXException, ParserConfigurationException {
-        //String [] results = SoapLoginUtil.login("dpham@180.private.streaming.20.org8", "123456", "https://ist6.soma.salesforce.com");
-        String[] results = SoapLoginUtil.login(USER_NAME, "m3FUXujlX", "https://ist6.soma.salesforce.com");
+        //String [] results = SoapLoginUtil.login("me8", "123456", "https://me.com");
+        String[] results = SoapLoginUtil.login(USER_NAME, "m3FUXujlX", "https://me.com");
 
         System.out.println("Session id " + results[0] + " url " + results[1]);
         SESSION_ID = results[0];
